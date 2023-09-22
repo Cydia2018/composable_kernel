@@ -25,7 +25,7 @@ template <typename ALayout,
           typename Acc0ElementwiseOperation,
           typename B1ElementwiseOperation,
           typename CElementwiseOperation,
-          bool MaskOutUpperTriangle> // TODO: enum for mask type
+          bool MaskUpperTriangleFromTopLeft> // TODO: enum for mask type
 struct DeviceBatchedGemmSoftmaxGemm : public BaseOperator
 {
     virtual std::unique_ptr<BaseArgument>

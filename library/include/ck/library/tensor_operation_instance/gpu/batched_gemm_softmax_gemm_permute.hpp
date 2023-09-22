@@ -35,7 +35,7 @@ void add_device_batched_gemm_masking_softmax_gemm_permute_xdl_cshuffle_f16_f16_f
                                             Scale,
                                             PassThrough,
                                             PassThrough,
-                                            MaskingSpecialization::MaskOutUpperTriangle>>>&
+                                            MaskingSpecialization::MaskUpperTriangleFromTopLeft>>>&
         instances);
 
 void add_device_batched_gemm_softmax_gemm_permute_xdl_cshuffle_f16_f16_f16_f16_gmk_gnk_gno_gmo_instances(
@@ -78,7 +78,7 @@ void add_device_batched_gemm_masking_softmax_gemm_permute_xdl_cshuffle_bf16_bf16
                                             Scale,
                                             PassThrough,
                                             PassThrough,
-                                            MaskingSpecialization::MaskOutUpperTriangle>>>&
+                                            MaskingSpecialization::MaskUpperTriangleFromTopLeft>>>&
         instances);
 
 void add_device_batched_gemm_softmax_gemm_permute_xdl_cshuffle_bf16_bf16_bf16_bf16_gmk_gnk_gno_gmo_instances(
@@ -152,7 +152,7 @@ struct DeviceOperationInstanceFactory<
         if constexpr(is_same_v<ADataType, half_t> && is_same_v<B0DataType, half_t> &&
                      is_same_v<B1DataType, half_t> && is_same_v<CDataType, half_t>)
         {
-            if constexpr(MaskingSpec == MaskingSpecialization::MaskOutUpperTriangle)
+            if constexpr(MaskingSpec == MaskingSpecialization::MaskUpperTriangleFromTopLeft)
             {
                 add_device_batched_gemm_masking_softmax_gemm_permute_xdl_cshuffle_f16_f16_f16_f16_gmk_gnk_gno_gmo_instances(
                     op_ptrs);
@@ -168,7 +168,7 @@ struct DeviceOperationInstanceFactory<
         else if constexpr(is_same_v<ADataType, BF16> && is_same_v<B0DataType, BF16> &&
                           is_same_v<B1DataType, BF16> && is_same_v<CDataType, BF16>)
         {
-            if constexpr(MaskingSpec == MaskingSpecialization::MaskOutUpperTriangle)
+            if constexpr(MaskingSpec == MaskingSpecialization::MaskUpperTriangleFromTopLeft)
             {
                 add_device_batched_gemm_masking_softmax_gemm_permute_xdl_cshuffle_bf16_bf16_bf16_bf16_gmk_gnk_gno_gmo_instances(
                     op_ptrs);

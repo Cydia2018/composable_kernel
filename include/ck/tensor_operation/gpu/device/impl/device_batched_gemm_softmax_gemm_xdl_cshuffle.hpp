@@ -183,7 +183,7 @@ template <typename ALayout,
           index_t CShuffleNXdlPerWavePerShuffle,
           typename CShuffleBlockTransferClusterLengths_MBlock_MPerBlock_NBlock_NPerBlock,
           index_t CShuffleBlockTransferScalarPerVector_NPerBlock,
-          bool MaskOutUpperTriangle,
+          bool MaskUpperTriangleFromTopLeft,
           LoopScheduler LoopSched = LoopScheduler::Default>
 struct DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle
     : public DeviceBatchedGemmSoftmaxGemm<ALayout,
@@ -199,7 +199,7 @@ struct DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle
                                           AccElementwiseOperation,
                                           B1ElementwiseOperation,
                                           CElementwiseOperation,
-                                          MaskOutUpperTriangle>
+                                          MaskUpperTriangleFromTopLeft>
 {
     using DeviceOp = DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle;
 
@@ -363,8 +363,8 @@ struct DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle
     using B1GridDesc_BK0_N_BK1 = decltype(MakeB1GridDescriptor_BK0_N_BK1(1, 1, 1));
     using CGridDesc_M_N        = decltype(MakeCGridDescriptor_M_N(1, 1, 1));
 
-    using C0MatrixMask = conditional_t<MaskOutUpperTriangle,
-                                       C0MatrixMask_impl<MaskOutUpperTrianglePredicate>,
+    using C0MatrixMask = conditional_t<MaskUpperTriangleFromTopLeft,
+                                       C0MatrixMask_impl<MaskUpperTriangleFromTopLeftPredicate>,
                                        C0MatrixMask_impl<MaskDisabledPredicate>>;
 
     // GridwiseGemm
@@ -428,7 +428,7 @@ struct DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle
         CShuffleBlockTransferScalarPerVector_NPerBlock,
         LoopSched,
         matrix_padder.PadN,
-        MaskOutUpperTriangle>;
+        MaskUpperTriangleFromTopLeft>;
 
     // Argument
     struct Argument : public BaseArgument
@@ -473,7 +473,7 @@ struct DeviceBatchedGemmSoftmaxGemm_Xdl_CShuffle
               c_element_op_{c_element_op},
               batch_count_(Batch),
               compute_base_ptr_of_batch_{BatchStrideA, BatchStrideB, BatchStrideB1, BatchStrideC},
-              c0_matrix_mask_{NRaw},
+              c0_matrix_mask_{MRaw, NRaw},
               raw_lengths_m_n_k_o_{MRaw, NRaw, KRaw, Gemm1NRaw}
         {
             if(GridwiseGemm::CheckValidity(a_grid_desc_ak0_m_ak1_,

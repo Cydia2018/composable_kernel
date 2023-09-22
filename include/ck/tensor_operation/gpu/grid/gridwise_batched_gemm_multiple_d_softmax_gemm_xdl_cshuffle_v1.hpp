@@ -79,7 +79,7 @@ template <typename FloatAB,
           index_t CShuffleBlockTransferScalarPerVector_NPerBlock,
           LoopScheduler LoopSched,
           bool PadN,
-          bool MaskOutUpperTriangle,
+          bool MaskUpperTriangleFromTopLeft,
           int D0sTransferSrcScalarPerVector = 4,
           PipelineVersion PipelineVer       = PipelineVersion::v1>
 struct GridwiseBatchedGemmMultipleDSoftmaxGemm_Xdl_CShuffle
@@ -931,7 +931,7 @@ struct GridwiseBatchedGemmMultipleDSoftmaxGemm_Xdl_CShuffle
             }
 
             // do MNK padding or upper triangular masking
-            if constexpr(MaskOutUpperTriangle || PadN)
+            if constexpr(MaskUpperTriangleFromTopLeft || PadN)
             {
                 // 8d thread_desc in thread scope
                 constexpr auto c_thread_lengths =
